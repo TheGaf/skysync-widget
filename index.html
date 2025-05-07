@@ -1,83 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Bluesky Feed Widget</title>
-  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;700&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      font-family: 'Titillium Web', sans-serif;
-      background-color: #121212;
-      color: #59DCFF;
-      padding: 20px;
+      font-family: system-ui, sans-serif;
+      background-color: #0d1117;
+      color: #c9d1d9;
       margin: 0;
+      padding: 2rem;
     }
-    .container {
-      max-width: 350px;
-      margin: auto;
+
+    .widget {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      background: #161b22;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
     }
-    h2 {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 0;
-    }
-    .byline {
-      font-size: 12px;
-      color: #aaa;
-      margin-bottom: 20px;
-    }
+
     input[type="text"] {
-      width: 100%;
-      padding: 8px;
-      font-size: 14px;
-      margin-bottom: 10px;
+      width: 70%;
+      padding: 0.5rem;
       border-radius: 4px;
-      border: 1px solid #444;
-      background: #1e1e1e;
-      color: #59DCFF;
+      border: none;
+      margin-right: 0.5rem;
     }
+
     button {
-      width: 100%;
-      padding: 8px;
-      font-size: 14px;
-      background: #59DCFF;
-      color: #121212;
+      padding: 0.5rem 1rem;
+      background-color: #238636;
+      color: white;
       border: none;
       border-radius: 4px;
       cursor: pointer;
+      margin-right: 0.5rem;
     }
+
     button:hover {
-      background: #00cfff;
+      background-color: #2ea043;
     }
-    .feed-scroll {
-      max-height: 300px;
-      overflow-y: auto;
-      margin-top: 15px;
+
+    .feed-window {
+      height: 400px;
+      overflow: hidden;
+      margin-top: 1rem;
     }
+
     .post {
       margin-bottom: 1.5em;
       padding-bottom: 1em;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
-    a {
-      color: #0ff;
-      font-weight: bold;
-      text-decoration: none;
+
+    .pagination {
+      margin-top: 1rem;
+      text-align: center;
     }
-    small {
-      color: #ccc;
+
+    .footer {
+      font-size: 0.8rem;
+      color: #8b949e;
+      text-align: center;
+      margin-top: 1.5rem;
+    }
+
+    .footer a {
+      color: #58a6ff;
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Bluesky Feed Widget</h2>
-    <div class="byline">by <a href="https://www.gaf.nyc" target="_blank">The Gaf</a></div>
-    <input type="text" id="handleInput" placeholder="Paste a handle (e.g. @jack.bsky.social)" />
-    <button onclick="loadFeed()">Load Feed</button>
-    <div id="feed" class="feed-scroll">Enter a handle to load a feed.</div>
+  <div class="widget">
+    <h1>Bluesky Feed Viewer</h1>
+    <p>Enter any handle (without @):</p>
+    <input type="text" id="handleInput" placeholder="e.g. gaf.nyc">
+    <button id="loadButton">Load Feed</button>
+
+    <div class="feed-window">
+      <div id="postsContainer"></div>
+    </div>
+
+    <div class="pagination">
+      <button id="prevBtn">Back</button>
+      <button id="nextBtn">Next</button>
+    </div>
+
+    <div class="footer">
+      by <a href="https://www.gaf.nyc" target="_blank">The Gaf</a>
+    </div>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
