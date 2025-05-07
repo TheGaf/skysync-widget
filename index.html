@@ -7,6 +7,7 @@
   <title>Bluesky Feed Viewer</title>
   <link rel="icon" href="/favicon.ico" type="image/x-icon" />
   <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link rel="preload" as="audio" href="https://archive.org/download/hangouts_sfx/hangouts_message_2.ogg">
   <style>
     body {
       font-family: 'Titillium Web', sans-serif;
@@ -168,16 +169,24 @@
     let posts = [];
     let currentPage = 0;
     const postsPerPage = 5;
+    const notificationSound = new Audio("http://gaf.nyc/gafPing.mp3");
+    let lastFirstUri = null;
 
-    async function loadFeed() {
+    async function loadFeed(playSound = false) {
       const handle = document.getElementById("handleInput").value.trim();
       if (!handle) return;
       const response = await fetch(`/api/bluesky/feed?handle=${handle}`);
       const data = await response.json();
-      posts = data.posts || [];
+      const newPosts = data.posts || [];
+
+      if (playSound && newPosts.length && newPosts[0].uri !== lastFirstUri) {
+        notificationSound.play();
+        lastFirstUri = newPosts[0].uri;
+      }
+
+      posts = newPosts;
       currentPage = 0;
       renderPosts();
-      console.log("Embed debug:", data.posts.map(p => ({ text: p.text, uri: p.uri, embed: p.embed })));
     }
 
     function renderPosts() {
@@ -201,9 +210,7 @@
         const did = uriParts[2];
         const postUrl = `https://bsky.app/profile/${did}/post/${rkey}`;
 
-        // Handle all media paths including cards
         let mediaHTML = "";
-
         const possiblePaths = [
           post.embed?.images,
           post.embed?.record?.embed?.images,
@@ -246,6 +253,8 @@
       currentPage = Math.min(Math.max(currentPage + delta, 0), maxPage);
       renderPosts();
     }
+
+    setInterval(() => loadFeed(true), 60000);
   </script>
 </body>
 
