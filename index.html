@@ -169,7 +169,7 @@
     let posts = [];
     let currentPage = 0;
     const postsPerPage = 5;
-    const notificationSound = new Audio("http://gaf.nyc/gafPing.mp3");
+    const notificationSound = new Audio("https://archive.org/download/hangouts_sfx/hangouts_message_2.ogg");
     let lastFirstUri = null;
 
     async function loadFeed(playSound = false) {
@@ -179,9 +179,10 @@
       const data = await response.json();
       const newPosts = data.posts || [];
 
-      if (playSound && newPosts.length && newPosts[0].uri !== lastFirstUri) {
+      const newTopUri = newPosts[0]?.uri;
+      if (playSound && newTopUri && newTopUri !== lastFirstUri) {
         notificationSound.play();
-        lastFirstUri = newPosts[0].uri;
+        lastFirstUri = newTopUri;
       }
 
       posts = newPosts;
@@ -254,7 +255,15 @@
       renderPosts();
     }
 
+    // Auto-refresh every 60 seconds
     setInterval(() => loadFeed(true), 60000);
+
+    // Silent initial load to set baseline URI
+    loadFeed().then(() => {
+      if (posts[0]) {
+        lastFirstUri = posts[0].uri;
+      }
+    });
   </script>
 </body>
 
