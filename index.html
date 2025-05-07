@@ -7,7 +7,7 @@
   <title>Bluesky Feed Viewer</title>
   <link rel="icon" href="/favicon.ico" type="image/x-icon" />
   <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;700&display=swap" rel="stylesheet" />
-  <link rel="preload" as="audio" href="https://archive.org/download/hangouts_sfx/hangouts_message_2.ogg">
+  <link rel="preload" as="audio" href="https://gaf.nyc/gafPing.mp3">
   <style>
     body {
       font-family: 'Titillium Web', sans-serif;
@@ -151,21 +151,14 @@
     <source src="https://gaf.nyc/cloud.mp4" type="video/mp4">
   </video>
 
-<div class="container">
-  <h2>🌥️ BSKY FEED VIEWER 🌥️</h2>
-  <input type="text" id="handleInput" placeholder="Enter handle (no @)" />
-  <button onclick="loadFeed()">Load Feed</button>
+  <div class="container">
+    <h2>🌥️ BSKY FEED VIEWER 🌥️</h2>
+    <input type="text" id="handleInput" placeholder="Enter handle (no @)" />
+    <button onclick="loadFeed()">Load Feed</button>
 
-  <div class="feed-box" id="feedContainer">
-    <img src="https://gaf.nyc/Notion_Template_With_Widget.png" alt="Widget preview" style="width:100%; border-radius:10px;" />
-  </div>
-
-  <div class="nav-buttons">
-    <button onclick="changePage(-1)">Back</button>
-    <button onclick="changePage(1)">Next</button>
-  </div>
-</div>
-
+    <div class="feed-box" id="feedContainer">
+      <img src="https://gaf.nyc/Notion_Template_With_Widget.png" alt="Widget preview" style="width:100%; border-radius:10px;" />
+    </div>
 
     <div class="nav-buttons">
       <button onclick="changePage(-1)">Back</button>
