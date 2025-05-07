@@ -194,46 +194,58 @@
     }
 
     function renderPosts() {
-      const container = document.getElementById("feedContainer");
-      container.innerHTML = "";
-      const start = currentPage * postsPerPage;
-      const end = start + postsPerPage;
-      const currentPosts = posts.slice(start, end);
+  const container = document.getElementById("feedContainer");
+  container.innerHTML = "";
+  const start = currentPage * postsPerPage;
+  const end = start + postsPerPage;
+  const currentPosts = posts.slice(start, end);
 
-      if (currentPosts.length === 0) {
-        container.innerHTML = "<p>No posts found.</p>";
-        return;
-      }
+  if (currentPosts.length === 0) {
+    container.innerHTML = "<p>No posts found.</p>";
+    return;
+  }
 
-      currentPosts.forEach(post => {
-        const div = document.createElement("div");
-        div.className = "post";
+  currentPosts.forEach(post => {
+    const div = document.createElement("div");
+    div.className = "post";
 
-        const uriParts = post.uri.split('/');
-        const rkey = uriParts[uriParts.length - 1];
-        const did = uriParts[2];
-        const postUrl = `https://bsky.app/profile/${did}/post/${rkey}`;
+    const uriParts = post.uri.split('/');
+    const rkey = uriParts[uriParts.length - 1];
+    const did = uriParts[2];
+    const postUrl = `https://bsky.app/profile/${did}/post/${rkey}`;
 
-        let mediaHTML = "";
-        if (post.embed && post.embed.images && post.embed.images.length) {
-          mediaHTML = post.embed.images.map(img =>
-            `<img src="${img.thumb || img.fullsize}" alt="Embedded image">`
-          ).join("");
-        } else if (post.embed && post.embed.video && post.embed.video.thumb) {
-          mediaHTML = `<video controls><source src="${post.embed.video.thumb}" type="video/mp4"></video>`;
-        }
+    // Check embed paths
+    let mediaHTML = "";
 
-        div.innerHTML = `
-          <a href="${postUrl}" target="_blank" style="text-decoration: none; color: inherit;">
-            <h3>${post.text}</h3>
-            <time>${new Date(post.createdAt).toLocaleString()}</time>
-            ${mediaHTML}
-          </a>
-        `;
+    // Check for top-level images
+    const images = post.embed?.images || 
+                   post.embed?.record?.embed?.images || 
+                   post.embed?.record?.record?.embed?.images;
 
-        container.appendChild(div);
-      });
+    if (images && Array.isArray(images)) {
+      mediaHTML = images.map(img =>
+        `<img src="${img.thumb || img.fullsize}" alt="Embedded image">`
+      ).join("");
     }
+
+    // Check for video (rare in Bluesky currently)
+    const video = post.embed?.video;
+    if (video?.thumb) {
+      mediaHTML += `<video controls><source src="${video.thumb}" type="video/mp4"></video>`;
+    }
+
+    div.innerHTML = `
+      <a href="${postUrl}" target="_blank" style="text-decoration: none; color: inherit;">
+        <h3>${post.text}</h3>
+        <time>${new Date(post.createdAt).toLocaleString()}</time>
+        ${mediaHTML}
+      </a>
+    `;
+
+    container.appendChild(div);
+  });
+}
+
 
     function changePage(delta) {
       const maxPage = Math.floor(posts.length / postsPerPage);
