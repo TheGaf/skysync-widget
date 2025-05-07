@@ -24,10 +24,15 @@ document.addEventListener('DOMContentLoaded', () => {
     pagePosts.forEach(post => {
       const postDiv = document.createElement('div');
       postDiv.className = 'post';
+
+      const href = `https://bsky.app/profile/${post.uri.split('/')[1]}/post/${post.uri.split('/')[3]}`;
       postDiv.innerHTML = `
-        <p class="text-xl font-semibold text-sky-400 mb-1">${post.text}</p>
-        <p class="text-gray-400 text-sm">${new Date(post.createdAt).toLocaleString()}</p>
+        <a href="${href}" target="_blank" style="text-decoration:none; color:inherit;">
+          <p class="text-xl font-semibold text-sky-400 mb-1">${post.text}</p>
+          <p class="text-gray-400 text-sm">${new Date(post.createdAt).toLocaleString()}</p>
+        </a>
       `;
+
       container.appendChild(postDiv);
     });
 
