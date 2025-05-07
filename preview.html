@@ -1,17 +1,17 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>BSKY Widget Preview</title>
+  <title>BSKY Preview Redirect</title>
   <style>
-    body {
+    html, body {
       margin: 0;
+      padding: 0;
       background: #000;
+      height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 100vh;
     }
     img {
       max-width: 100%;
@@ -19,8 +19,11 @@
       border-radius: 10px;
     }
   </style>
+  <script>
+    window.location.href = "/";
+  </script>
 </head>
 <body>
-  <img src="https://gaf.nyc/Notion_Template_With_Widget.png" alt="Preview Image" />
+  <img src="https://gaf.nyc/Notion_Template_With_Widget.png" alt="Bluesky Widget Preview" />
 </body>
 </html>
