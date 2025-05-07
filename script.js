@@ -2,28 +2,29 @@
 // Main client-side Bluesky feed logic
 
 let posts = [];
-    let currentPage = 0;
-    const postsPerPage = 5;
-    const notificationSound = new Audio("https://archive.org/download/hangouts_sfx/hangouts_message_2.ogg");
-    let lastFirstUri = null;
+let currentPage = 0;
+const postsPerPage = 5;
+const notificationSound = new Audio("https://gaf.nyc/gafPing.mp3");
+let lastFirstUri = null;
 
-    async function loadFeed(playSound = false) {
-      const handle = document.getElementById("handleInput").value.trim();
-      if (!handle) return;
-      const response = await fetch(`/api/bluesky/feed?handle=${handle}`);
-      const data = await response.json();
-      const newPosts = data.posts || [];
+async function loadFeed(playSound = false) {
+  const handle = document.getElementById("handleInput").value.trim();
+  if (!handle) return;
 
-      const newTopUri = newPosts[0]?.uri;
-      if (playSound && newTopUri && newTopUri !== lastFirstUri) {
-        notificationSound.play();
-        lastFirstUri = newTopUri;
-      }
+  const response = await fetch(`/api/bluesky/feed?handle=${handle}`);
+  const data = await response.json();
+  const newPosts = data.posts || [];
 
-      posts = newPosts;
-      currentPage = 0;
-      renderPosts();
-    }
+  const newTopUri = newPosts[0]?.uri;
+  if (playSound && newTopUri && newTopUri !== lastFirstUri) {
+    notificationSound.play();
+  }
+  lastFirstUri = newTopUri;
+
+  posts = newPosts;
+  currentPage = 0;
+  renderPosts();
+}
 
     function renderPosts() {
       const container = document.getElementById("feedContainer");
