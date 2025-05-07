@@ -191,6 +191,12 @@
       posts = data.posts || [];
       currentPage = 0;
       renderPosts();
+      console.log("Embed debug:", data.posts.map(p => ({
+  text: p.text,
+  uri: p.uri,
+  embed: p.embed
+})));
+
     }
 
 function renderPosts() {
