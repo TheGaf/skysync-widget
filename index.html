@@ -60,6 +60,7 @@
       width: 168px;
       padding: 10px;
       font-weight: 400;
+      font-family: 'Titillium Web', sans-serif;
       font-size: 14px;
       border: none;
       border-radius: 5px;
@@ -72,6 +73,7 @@
       border: none;
       padding: 10px 20px;
       font-weight: 700;
+      font-family: 'Titillium Web', sans-serif;
       border-radius: 5px;
       cursor: pointer;
       margin: 5px;
@@ -105,8 +107,7 @@
       color: #ccc;
     }
 
-    .post img,
-    .post video {
+    .post img, .post video {
       max-width: 100%;
       margin-top: 5px;
       border-radius: 5px;
@@ -200,49 +201,32 @@
         const did = uriParts[2];
         const postUrl = `https://bsky.app/profile/${did}/post/${rkey}`;
 
+        // Handle all media paths including cards
         let mediaHTML = "";
 
-        // Images
-        const imageEmbeds = [
+        const possiblePaths = [
           post.embed?.images,
           post.embed?.record?.embed?.images,
-          post.embed?.record?.record?.embed?.images
+          post.embed?.record?.record?.embed?.images,
+          post.embed?.record?.record?.value?.embed?.images,
+          post.embed?.record?.value?.embed?.images
         ];
 
-        for (const imgArray of imageEmbeds) {
-          if (Array.isArray(imgArray)) {
-            mediaHTML += imgArray.map(img =>
-              `<img src="${img.thumb || img.fullsize}" alt="Image" />`
-            ).join("");
+        for (const path of possiblePaths) {
+          if (Array.isArray(path)) {
+            mediaHTML = path.map(img => `<img src="${img.thumb || img.fullsize}" alt="Embedded image">`).join("");
             break;
           }
         }
 
-        // External cards (social cards)
-        const external = post.embed?.external;
-        if (external?.thumb && external?.uri) {
+        const card = post.embed?.external || post.embed?.record?.embed?.external;
+        if (card) {
           mediaHTML += `
-            <div style="margin-top:10px;">
-              <a href="${external.uri}" target="_blank" style="color:#FBAE17;">
-                <img src="${external.thumb}" style="max-width:100%; border-radius:5px;" />
-                <p><strong>${external.title}</strong><br>${external.description}</p>
-              </a>
-            </div>`;
-        }
-
-        // Quoted posts
-        const quote = post.embed?.record?.value;
-        if (quote?.text) {
-          mediaHTML += `
-            <div style="margin-top:10px; padding:8px; border-left: 2px solid #ff66cc;">
-              <em>${quote.text}</em>
-            </div>`;
-        }
-
-        // Video (if ever supported)
-        const video = post.embed?.video;
-        if (video?.thumb) {
-          mediaHTML += `<video controls><source src="${video.thumb}" type="video/mp4"></video>`;
+            <div style="margin-top:8px; padding:10px; border:1px solid #444; border-radius:5px; background:#1e1e1e">
+              <a href="${card.uri}" target="_blank" style="color:#FBAE17;">${card.title}</a><br>
+              <small>${card.description}</small>
+            </div>
+          `;
         }
 
         div.innerHTML = `
@@ -250,7 +234,8 @@
             <h3>${post.text}</h3>
             <time>${new Date(post.createdAt).toLocaleString()}</time>
             ${mediaHTML}
-          </a>`;
+          </a>
+        `;
 
         container.appendChild(div);
       });
