@@ -1,6 +1,7 @@
 function loadFeed() {
   const handle = document.getElementById("handleInput").value.trim();
   const feedContainer = document.getElementById("feed");
+
   if (!handle) {
     feedContainer.innerHTML = "Please enter a handle.";
     return;
@@ -27,7 +28,8 @@ function loadFeed() {
         feedContainer.appendChild(div);
       });
     })
-    .catch(() => {
+    .catch(err => {
+      console.error("Fetch error:", err);
       feedContainer.innerHTML = "Failed to load feed.";
     });
 }
