@@ -44,8 +44,13 @@
     }
 
     @keyframes slowBlink {
-      0% { filter: brightness(1); }
-      100% { filter: brightness(2); }
+      0% {
+        filter: brightness(1);
+      }
+
+      100% {
+        filter: brightness(2);
+      }
     }
 
     h2 {
@@ -107,16 +112,23 @@
       color: #ccc;
     }
 
+    .post img,
+    .post video {
+      max-width: 100%;
+      margin-top: 5px;
+      border-radius: 5px;
+    }
+
     .nav-buttons {
       text-align: center;
       margin-top: 10px;
     }
 
     .nav-buttons button {
-      background-color: #00AA44;
-      color: #fff;
+      background-color: #ff66cc;
+      color: #000;
       margin: 0 5px;
-      border: 2px solid #59DCFF;
+      border: 2px solid #ff66cc;
     }
 
     a {
@@ -132,9 +144,17 @@
     }
 
     @keyframes blink {
-      0% { color: #FFFFFF; }
-      50% { color: #00FF33; }
-      100% { color: #FFFFFF; }
+      0% {
+        color: #FFFFFF;
+      }
+
+      50% {
+        color: #00FF33;
+      }
+
+      100% {
+        color: #FFFFFF;
+      }
     }
   </style>
 </head>
@@ -155,11 +175,7 @@
       <button onclick="changePage(1)">Next</button>
     </div>
 
-    <p style="text-align:center; font-size: 13px;"><br>
-      <a href="https://gaf.nyc" target="_blank">
-        <img src="https://gaf.nyc/BGtitle.svg" alt="BG Logo" class="logo" />
-      </a>
-    </p>
+    <p style="text-align:center; font-size: 13px;"><br><a href="https://gaf.nyc" target="_blank"><img src="https://gaf.nyc/BGtitle.svg" alt="BG Logo" class="logo" /></a></p>
   </div>
 
   <script>
@@ -193,17 +209,28 @@
         const div = document.createElement("div");
         div.className = "post";
 
-const rkey = post.uri.split('/').pop();
-const userHandle = document.getElementById("handleInput").value.trim();
-const postUrl = `https://bsky.app/profile/${userHandle}/post/${rkey}`;
+        const uriParts = post.uri.split('/');
+        const rkey = uriParts[uriParts.length - 1];
+        const did = uriParts[2];
+        const postUrl = `https://bsky.app/profile/${did}/post/${rkey}`;
 
+        let mediaHTML = "";
+        if (post.embed && post.embed.images && post.embed.images.length) {
+          mediaHTML = post.embed.images.map(img =>
+            `<img src="${img.thumb || img.fullsize}" alt="Embedded image">`
+          ).join("");
+        } else if (post.embed && post.embed.video && post.embed.video.thumb) {
+          mediaHTML = `<video controls><source src="${post.embed.video.thumb}" type="video/mp4"></video>`;
+        }
 
         div.innerHTML = `
           <a href="${postUrl}" target="_blank" style="text-decoration: none; color: inherit;">
             <h3>${post.text}</h3>
             <time>${new Date(post.createdAt).toLocaleString()}</time>
+            ${mediaHTML}
           </a>
         `;
+
         container.appendChild(div);
       });
     }
