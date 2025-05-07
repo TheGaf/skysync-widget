@@ -88,8 +88,7 @@
       background: rgba(0, 0, 0, 0.75);
       border-radius: 10px;
       border: 1px solid rgba(89, 220, 255, 0.1);
-      max-height: 400px;
-      min-height: 100px;
+      max-height: 350px;
       overflow-y: auto;
       padding: 10px;
     }
@@ -214,24 +213,19 @@
     const did = uriParts[2];
     const postUrl = `https://bsky.app/profile/${did}/post/${rkey}`;
 
-    // Check embed paths
+    // Check all known image paths
+    let images =
+      post.embed?.images ||
+      post.embed?.record?.embed?.images ||
+      post.embed?.record?.record?.embed?.images ||
+      post.embed?.record?.record?.value?.embed?.images;
+
     let mediaHTML = "";
 
-    // Check for top-level images
-    const images = post.embed?.images || 
-                   post.embed?.record?.embed?.images || 
-                   post.embed?.record?.record?.embed?.images;
-
     if (images && Array.isArray(images)) {
-      mediaHTML = images.map(img =>
-        `<img src="${img.thumb || img.fullsize}" alt="Embedded image">`
-      ).join("");
-    }
-
-    // Check for video (rare in Bluesky currently)
-    const video = post.embed?.video;
-    if (video?.thumb) {
-      mediaHTML += `<video controls><source src="${video.thumb}" type="video/mp4"></video>`;
+      mediaHTML = images
+        .map(img => `<img src="${img.thumb || img.fullsize}" alt="Embedded image">`)
+        .join("");
     }
 
     div.innerHTML = `
