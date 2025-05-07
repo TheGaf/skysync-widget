@@ -2,7 +2,11 @@
   "name": "skysync-widget",
   "version": "1.0.0",
   "description": "Bluesky Feed Widget",
+  "main": "script.js",
   "type": "module",
+  "scripts": {
+    "start": "node script.js"
+  },
   "dependencies": {
     "@atproto/api": "latest"
   },
