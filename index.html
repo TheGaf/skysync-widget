@@ -44,13 +44,8 @@
     }
 
     @keyframes slowBlink {
-      0% {
-        filter: brightness(1);
-      }
-
-      100% {
-        filter: brightness(2);
-      }
+      0% { filter: brightness(1); }
+      100% { filter: brightness(2); }
     }
 
     h2 {
@@ -137,17 +132,9 @@
     }
 
     @keyframes blink {
-      0% {
-        color: #FFFFFF;
-      }
-
-      50% {
-        color: #00FF33;
-      }
-
-      100% {
-        color: #FFFFFF;
-      }
+      0% { color: #FFFFFF; }
+      50% { color: #00FF33; }
+      100% { color: #FFFFFF; }
     }
   </style>
 </head>
@@ -168,62 +155,64 @@
       <button onclick="changePage(1)">Next</button>
     </div>
 
-    <p style="text-align:center; font-size: 13px;"><br><a href="https://gaf.nyc" target="_blank"><img src="https://gaf.nyc/BGtitle.svg" alt="BG Logo" class="logo" </a></p>
+    <p style="text-align:center; font-size: 13px;"><br>
+      <a href="https://gaf.nyc" target="_blank">
+        <img src="https://gaf.nyc/BGtitle.svg" alt="BG Logo" class="logo" />
+      </a>
+    </p>
   </div>
 
-<script>
-  let posts = [];
-  let currentPage = 0;
-  const postsPerPage = 5;
+  <script>
+    let posts = [];
+    let currentPage = 0;
+    const postsPerPage = 5;
 
-  async function loadFeed() {
-    const handle = document.getElementById("handleInput").value.trim();
-    if (!handle) return;
-    const response = await fetch(`/api/bluesky/feed?handle=${handle}`);
-    const data = await response.json();
-    posts = data.posts || [];
-    currentPage = 0;
-    renderPosts();
-  }
-
-  function renderPosts() {
-    const container = document.getElementById("feedContainer");
-    container.innerHTML = "";
-    const start = currentPage * postsPerPage;
-    const end = start + postsPerPage;
-    const currentPosts = posts.slice(start, end);
-
-    if (currentPosts.length === 0) {
-      container.innerHTML = "<p>No posts found.</p>";
-      return;
+    async function loadFeed() {
+      const handle = document.getElementById("handleInput").value.trim();
+      if (!handle) return;
+      const response = await fetch(`/api/bluesky/feed?handle=${handle}`);
+      const data = await response.json();
+      posts = data.posts || [];
+      currentPage = 0;
+      renderPosts();
     }
 
-    currentPosts.forEach(post => {
-      const div = document.createElement("div");
-      div.className = "post";
-      
-const handle = post.author?.handle || 'unknown';
-const [_, did, , rkey] = post.uri.split('/');
-const postUrl = `https://bsky.app/profile/${handle}/post/${rkey}`;
+    function renderPosts() {
+      const container = document.getElementById("feedContainer");
+      container.innerHTML = "";
+      const start = currentPage * postsPerPage;
+      const end = start + postsPerPage;
+      const currentPosts = posts.slice(start, end);
 
+      if (currentPosts.length === 0) {
+        container.innerHTML = "<p>No posts found.</p>";
+        return;
+      }
 
-      div.innerHTML = `
-        <a href="${postUrl}" target="_blank" style="text-decoration: none; color: inherit;">
-          <h3>${post.text}</h3>
-          <time>${new Date(post.createdAt).toLocaleString()}</time>
-        </a>`;
-      
-      container.appendChild(div);
-    });
-  }
+      currentPosts.forEach(post => {
+        const div = document.createElement("div");
+        div.className = "post";
 
-  function changePage(delta) {
-    const maxPage = Math.floor(posts.length / postsPerPage);
-    currentPage = Math.min(Math.max(currentPage + delta, 0), maxPage);
-    renderPosts();
-  }
-</script>
+        const rkey = post.uri.split('/').pop();
+        const handle = post.author?.handle || 'unknown';
+        const postUrl = `https://bsky.app/profile/${handle}/post/${rkey}`;
 
+        div.innerHTML = `
+          <a href="${postUrl}" target="_blank" style="text-decoration: none; color: inherit;">
+            <h3>${post.text}</h3>
+            <time>${new Date(post.createdAt).toLocaleString()}</time>
+          </a>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function changePage(delta) {
+      const maxPage = Math.floor(posts.length / postsPerPage);
+      currentPage = Math.min(Math.max(currentPage + delta, 0), maxPage);
+      renderPosts();
+    }
+  </script>
 </body>
 
 </html>
