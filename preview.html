@@ -1,8 +1,10 @@
+# Generate corrected preview.html with no JS redirect — just the fallback image
+correct_preview_html = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>BSKY Preview Redirect</title>
+  <title>Bluesky Widget Preview</title>
   <style>
     html, body {
       margin: 0;
@@ -19,11 +21,16 @@
       border-radius: 10px;
     }
   </style>
-  <script>
-    window.location.href = "/";
-  </script>
 </head>
 <body>
   <img src="https://gaf.nyc/Notion_Template_With_Widget.png" alt="Bluesky Widget Preview" />
 </body>
 </html>
+"""
+
+# Save it to a zip
+zip_path = "/mnt/data/preview-fix-static.zip"
+with zipfile.ZipFile(zip_path, "w") as zipf:
+    zipf.writestr("preview.html", correct_preview_html.strip())
+
+zip_path
