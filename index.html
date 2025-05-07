@@ -147,6 +147,23 @@
 </head>
 
 <body>
+  <!-- Fallback image for environments where JS is disabled -->
+  <noscript>
+    <style>
+      body {
+        margin: 0;
+        background: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+    </style>
+    <img src="https://gaf.nyc/Notion_Template_With_Widget.png" alt="Bluesky Widget Preview"
+         style="width:100%; max-width:400px; height:auto; border-radius:10px;" />
+  </noscript>
+
+  <!-- Real widget loads only if JS runs -->
   <video autoplay loop muted playsinline id="bg-video">
     <source src="https://gaf.nyc/cloud.mp4" type="video/mp4">
   </video>
@@ -157,7 +174,7 @@
     <button onclick="loadFeed()">Load Feed</button>
 
     <div class="feed-box" id="feedContainer">
-      <img src="https://gaf.nyc/Notion_Template_With_Widget.png" alt="Widget preview" style="width:100%; border-radius:10px;" />
+      <!-- This gets replaced by live posts -->
     </div>
 
     <div class="nav-buttons">
@@ -165,11 +182,8 @@
       <button onclick="changePage(1)">Next</button>
     </div>
 
-    <p style="text-align:center; font-size: 13px;"><br><a href="https://gaf.nyc" target="_blank"><img src="https://gaf.nyc/BGtitle.svg" alt="BG Logo" class="logo" /></a></p>
-
-    <noscript>
-      <p style="color:#ccc; text-align:center;">JavaScript is required to load the live feed.</p>
-    </noscript>
+    <p style="text-align:center; font-size: 13px;"><br><a href="https://gaf.nyc" target="_blank">
+      <img src="https://gaf.nyc/BGtitle.svg" alt="BG Logo" class="logo" /></a></p>
   </div>
 
   <script src="script.js"></script>
