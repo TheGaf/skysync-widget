@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SkySync: Notion x Bluesky</title>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Titillium Web', sans-serif;
+      background-color: #121212;
+      color: #59DCFF;
+      text-align: left;
+      padding: 20px;
+      overflow-y: auto;
+      line-height: 1.5;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    #bg-video {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      z-index: -1;
+      opacity: 1;
+    }
+
+    .container {
+      max-width: 350px;
+      margin: auto;
+      padding: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    h2 {
+      font-size: 17px;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin: 0 0 30px 0;
+      text-align: center;
+    }
+
+    h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-top: 0;
+      margin-bottom: 5px;
+    }
+
+    p {
+      max-width: 300px;
+      margin: 5px 0;
+      line-height: 1.2;
+    }
+
+    .section {
+      background: rgba(0, 0, 0, 0.75);
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      border: 1px solid rgba(89, 220, 255, 0.1);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.8s ease-out;
+    }
+
+    .section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .section:hover {
+      background: rgba(0, 0, 0, 0.85);
+      border-color: rgba(89, 220, 255, 0.2);
+    }
+
+    a {
+      color: #FFFFFF;
+      text-decoration: none;
+      font-weight: 700;
+      transition: color 0.3s ease;
+      animation: blink 2s infinite;
+    }
+
+    a:hover {
+      animation: none;
+      color: #FBAE17 !important;
+    }
+
+    @keyframes blink {
+      0% { color: #FFFFFF; }
+      50% { color: #00FF33; }
+      100% { color: #FFFFFF; }
+    }
+
+    @keyframes slowBlink {
+      0% { filter: brightness(1); }
+      100% { filter: brightness(2); }
+    }
+
+    .footer-logo {
+      display: block;
+      margin: 30px auto 10px auto;
+      width: 75px;
+      height: auto;
+      animation: slowBlink 0.75s infinite alternate;
+    }
+  </style>
+</head>
+<body>
+  <video autoplay loop muted playsinline id="bg-video" preload="auto">
+    <source src="https://gaf.nyc/cloud.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
+  <div class="container">
+    <h2>SkySync: Notion x Bluesky Hub</h2>
+
+    <div class="section">
+      <h3>🛰️ Latest Posts</h3>
+      <p id="bluesky-feed">Loading your feed...</p>
+    </div>
+
+    <div class="section">
+      <h3>📌 Save to Notion</h3>
+      <p id="save-to-notion">Click a post to save it to Notion.</p>
+    </div>
+
+    <div class="section">
+      <h3>✍️ Drafts Ready to Post</h3>
+      <p id="notion-drafts">Loading drafts...</p>
+    </div>
+
+    <div class="section">
+      <h3>📋 Label Sync</h3>
+      <p id="labeler-status">Loading label data...</p>
+    </div>
+
+    <a href="https://gaf.nyc" target="_blank">
+      <img src="https://gaf.nyc/BGtitle.svg" alt="BG Logo" class="footer-logo" />
+    </a>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
