@@ -146,7 +146,7 @@
   </style>
 </head>
 
-<body>
+<body role="main">
   <video autoplay loop muted playsinline id="bg-video">
     <source src="https://gaf.nyc/cloud.mp4" type="video/mp4">
   </video>
@@ -165,7 +165,9 @@
     <p style="text-align:center; font-size: 13px;"><br><a href="https://gaf.nyc" target="_blank"><img src="https://gaf.nyc/BGtitle.svg" alt="BG Logo" class="logo" /></a></p>
   </div>
 
-  <script>
+  <script src="script.js"></script>
+<!-- moved JS to external file -->
+<!-- see script.js -->
     let posts = [];
     let currentPage = 0;
     const postsPerPage = 5;
