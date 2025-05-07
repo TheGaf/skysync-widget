@@ -1,35 +1,43 @@
-function loadFeed() {
-  const handle = document.getElementById("handleInput").value.trim();
-  const feedContainer = document.getElementById("feed");
+document.addEventListener('DOMContentLoaded', () => {
+  const loadBtn = document.getElementById('loadBtn');
+  const handleInput = document.getElementById('handle');
+  const feedDiv = document.getElementById('feed');
 
-  if (!handle) {
-    feedContainer.innerHTML = "Please enter a handle.";
-    return;
-  }
+  loadBtn.addEventListener('click', async () => {
+    const rawHandle = handleInput.value.trim();
+    const handle = rawHandle.startsWith('@') ? rawHandle.slice(1) : rawHandle;
 
-  feedContainer.innerHTML = "Loading...";
+    if (!handle) {
+      feedDiv.innerHTML = '<p class="text-red-400">Please enter a handle.</p>';
+      return;
+    }
 
-  fetch(`/api/bluesky/feed?handle=${encodeURIComponent(handle)}`)
-    .then(res => res.json())
-    .then(data => {
+    try {
+      const res = await fetch(`/api/bluesky/feed?handle=${encodeURIComponent(handle)}`);
+      const data = await res.json();
+
+      feedDiv.innerHTML = '';
+
       if (!data.posts || data.posts.length === 0) {
-        feedContainer.innerHTML = "No posts found.";
+        feedDiv.innerHTML = '<p class="text-blue-300">No posts found.</p>';
         return;
       }
 
-      feedContainer.innerHTML = "";
       data.posts.forEach(post => {
-        const div = document.createElement("div");
-        div.classList.add("post");
-        div.innerHTML = `
-          <a href="https://bsky.app/profile/${post.uri}" target="_blank">${post.text}</a><br>
-          <small>${new Date(post.createdAt).toLocaleString()}</small>
+        const postDiv = document.createElement('div');
+        postDiv.className = 'post border-b border-gray-700 pb-4 mb-4';
+
+        const date = new Date(post.createdAt);
+        postDiv.innerHTML = `
+          <p class="text-xl font-semibold text-sky-400 mb-1">${post.text}</p>
+          <p class="text-gray-400 text-sm">${date.toLocaleString()}</p>
         `;
-        feedContainer.appendChild(div);
+
+        feedDiv.appendChild(postDiv);
       });
-    })
-    .catch(err => {
-      console.error("Fetch error:", err);
-      feedContainer.innerHTML = "Failed to load feed.";
-    });
-}
+    } catch (error) {
+      console.error(error);
+      feedDiv.innerHTML = '<p class="text-red-400">Error fetching feed. Please try again.</p>';
+    }
+  });
+});
