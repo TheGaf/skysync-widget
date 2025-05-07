@@ -168,11 +168,38 @@
 </head>
 
 <body>
+<body>
+  <script>
+    // Smart iframe-blocker fallback (prevents widget from rendering in Notion)
+    if (window !== window.parent) {
+      document.head.innerHTML = `
+        <style>
+          html, body {
+            margin: 0;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+          }
+        </style>
+      `;
+      document.body.innerHTML = `
+        <img src="https://gaf.nyc/Notion_Template_With_Widget.png"
+             alt="Bluesky Widget Preview"
+             style="width:100%; max-width:400px; height:auto; border-radius:10px;" />
+      `;
+      throw new Error("Stopping widget load in iframe.");
+    }
+  </script>
+
   <video autoplay loop muted playsinline id="bg-video">
     <source src="https://gaf.nyc/cloud.mp4" type="video/mp4">
   </video>
 
   <div class="container">
+    <!-- Your full widget continues here... -->
+
     <h2>🌥️ BSKY FEED VIEWER 🌥️</h2>
     <input type="text" id="handleInput" placeholder="Enter handle (no @)" />
     <button onclick="loadFeed()">Load Feed</button>
