@@ -193,7 +193,7 @@
       renderPosts();
     }
 
-    function renderPosts() {
+function renderPosts() {
   const container = document.getElementById("feedContainer");
   container.innerHTML = "";
   const start = currentPage * postsPerPage;
@@ -214,19 +214,24 @@
     const did = uriParts[2];
     const postUrl = `https://bsky.app/profile/${did}/post/${rkey}`;
 
-    // Check all known image paths
-    let images =
-      post.embed?.images ||
-      post.embed?.record?.embed?.images ||
-      post.embed?.record?.record?.embed?.images ||
-      post.embed?.record?.record?.value?.embed?.images;
+    // 💥 Search ALL known embed paths for images
+    const possiblePaths = [
+      post.embed?.images,
+      post.embed?.record?.embed?.images,
+      post.embed?.record?.record?.embed?.images,
+      post.embed?.record?.record?.value?.embed?.images,
+      post.embed?.record?.value?.embed?.images
+    ];
 
     let mediaHTML = "";
 
-    if (images && Array.isArray(images)) {
-      mediaHTML = images
-        .map(img => `<img src="${img.thumb || img.fullsize}" alt="Embedded image">`)
-        .join("");
+    for (const path of possiblePaths) {
+      if (Array.isArray(path)) {
+        mediaHTML = path.map(img =>
+          `<img src="${img.thumb || img.fullsize}" alt="Embedded image">`
+        ).join("");
+        break;
+      }
     }
 
     div.innerHTML = `
@@ -240,6 +245,7 @@
     container.appendChild(div);
   });
 }
+
 
 
     function changePage(delta) {
