@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,26 +9,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;700&display=swap" rel="stylesheet" />
   <style>
     html, body {
+      height: 100%;
       margin: 0;
-      padding: 0;
       font-family: 'Titillium Web', sans-serif;
       background-color: #121212;
       color: #59DCFF;
-    }
-
-    /* Fixed-size wrapper for Notion embedding */
-    .embed-wrapper {
-      width: 400px;
-      height: 700px;
-      overflow: hidden;
-      margin: 0 auto;
-      position: relative;
-      border-radius: 12px;
-      box-shadow: 0 0 10px #000;
+      text-align: left;
     }
 
     #bg-video {
-      position: absolute;
+      position: fixed;
       right: 0;
       bottom: 0;
       min-width: 100%;
@@ -37,13 +28,28 @@
     }
 
     .container {
+      max-width: 300px;
+      margin: auto;
       padding: 20px;
-      height: 100%;
-      box-sizing: border-box;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo {
+      width: 100%;
+      max-width: 90px;
+      display: block;
+      margin: 0 auto 30px auto;
+      animation: slowBlink 0.75s infinite alternate;
+    }
+
+    @keyframes slowBlink {
+      0% { filter: brightness(1); }
+      100% { filter: brightness(2); }
     }
 
     h2 {
-      font-size: 20px;
+      font-size: 24px;
       font-weight: 700;
       color: #FFFFFF;
       text-align: center;
@@ -51,10 +57,8 @@
     }
 
     input[type="text"] {
-      width: 68%;
+      width: 168px;
       padding: 10px;
-      font-weight: 400;
-      font-family: 'Titillium Web', sans-serif;
       font-size: 14px;
       border: none;
       border-radius: 5px;
@@ -63,24 +67,22 @@
 
     button {
       background-color: #59DCFF;
-      color: #ffff;
+      color: #000;
       border: none;
       padding: 10px 20px;
       font-weight: 700;
-      font-family: 'Titillium Web', sans-serif;
       border-radius: 5px;
       cursor: pointer;
-      margin-left: 5px;
+      margin: 5px;
     }
 
     .feed-box {
       background: rgba(0, 0, 0, 0.75);
       border-radius: 10px;
       border: 1px solid rgba(89, 220, 255, 0.1);
-      height: 300px;
+      max-height: 350px;
       overflow-y: auto;
       padding: 10px;
-      margin-top: 10px;
     }
 
     .post {
@@ -90,14 +92,14 @@
     }
 
     .post h3 {
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 700;
-      color: #59DCFF;
       margin-bottom: 5px;
+      color: #59DCFF;
     }
 
     .post time {
-      font-size: 12px;
+      font-size: 13px;
       color: #ccc;
     }
 
@@ -116,51 +118,78 @@
     .nav-buttons button {
       background-color: #ff66cc;
       color: #ffffff;
-      margin: 0 5px;
       border: 2px solid #ff66cc;
     }
 
-    .logo {
-      width: 90px;
-      display: block;
-      margin: 15px auto 0 auto;
-      animation: slowBlink 0.75s infinite alternate;
+    a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 700;
+      animation: blink 2s infinite;
     }
 
-    @keyframes slowBlink {
-      0% { filter: brightness(1); }
-      100% { filter: brightness(2); }
+    a:hover {
+      color: #FBAE17;
+      animation: none;
+    }
+
+    @keyframes blink {
+      0%, 100% { color: #FFFFFF; }
+      50% { color: #00FF33; }
+    }
+
+    #toggleVideo {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid #59DCFF;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 2;
     }
   </style>
 </head>
 
 <body>
-  <div class="embed-wrapper">
-    <video autoplay loop muted playsinline id="bg-video">
-      <source src="https://gaf.nyc/cloud.mp4" type="video/mp4">
-    </video>
+  <video autoplay loop muted playsinline id="bg-video">
+    <source src="https://gaf.nyc/cloud.mp4" type="video/mp4">
+  </video>
 
-    <div class="container">
-      <h2>🌥️ BSKY FEED VIEWER 🌥️</h2>
-      <input type="text" id="handleInput" placeholder="Enter handle (no @)" />
-      <button onclick="loadFeed()">Load Feed</button>
+  <div id="toggleVideo" onclick="toggleVideo()">Pause Background</div>
 
-      <div class="feed-box" id="feedContainer"></div>
-      <div class="nav-buttons">
-        <button onclick="changePage(-1)">Back</button>
-        <button onclick="changePage(1)">Next</button>
-      </div>
+  <div class="container">
+    <h2>🌥️ BSKY FEED VIEWER 🌥️</h2>
+    <input type="text" id="handleInput" placeholder="Enter handle (no @)" />
+    <button onclick="loadFeed()">Load Feed</button>
 
-      <a href="https://gaf.nyc" target="_blank">
-        <img src="https://gaf.nyc/BGtitle.svg" alt="BG Logo" class="logo" />
-      </a>
+    <div class="feed-box" id="feedContainer"></div>
+    <div class="nav-buttons">
+      <button onclick="changePage(-1)">Back</button>
+      <button onclick="changePage(1)">Next</button>
     </div>
+
+    <p style="text-align:center; font-size: 13px;"><br><a href="https://gaf.nyc" target="_blank"><img src="https://gaf.nyc/BGtitle.svg" alt="BG Logo" class="logo" /></a></p>
   </div>
 
   <script>
     let posts = [];
     let currentPage = 0;
     const postsPerPage = 5;
+
+    function toggleVideo() {
+      const video = document.getElementById("bg-video");
+      const button = document.getElementById("toggleVideo");
+      if (video.paused) {
+        video.play();
+        button.innerText = "Pause Background";
+      } else {
+        video.pause();
+        button.innerText = "Play Background";
+      }
+    }
 
     async function loadFeed() {
       const handle = document.getElementById("handleInput").value.trim();
@@ -193,35 +222,8 @@
         const did = uriParts[2];
         const postUrl = `https://bsky.app/profile/${did}/post/${rkey}`;
 
-        let mediaHTML = "";
-
-        const possiblePaths = [
-          post.embed?.images,
-          post.embed?.record?.embed?.images,
-          post.embed?.record?.record?.embed?.images,
-          post.embed?.record?.record?.value?.embed?.images,
-          post.embed?.record?.value?.embed?.images
-        ];
-
-        for (const path of possiblePaths) {
-          if (Array.isArray(path)) {
-            mediaHTML = path.map(img =>
-              `<img src="${img.thumb || img.fullsize}" alt="Embedded image">`
-            ).join("");
-            break;
-          }
-        }
-
-        // Card embed
-        const card = post.embed?.record?.record?.value?.embed?.external || post.embed?.external;
-        if (card?.uri && card?.title) {
-          mediaHTML += `
-            <div style="background:#222; padding:8px; border-radius:6px; margin-top:6px;">
-              <strong style="color:#00FFFF;">${card.title}</strong><br>
-              <small style="color:#ccc;">${card.description}</small><br>
-              <a href="${card.uri}" target="_blank" style="color:#59DCFF;">${card.uri}</a>
-            </div>`;
-        }
+        // Optional media (handled elsewhere)
+        let mediaHTML = ""; // Add media logic here if needed later
 
         div.innerHTML = `
           <a href="${postUrl}" target="_blank" style="text-decoration: none; color: inherit;">
@@ -241,4 +243,5 @@
     }
   </script>
 </body>
+
 </html>
