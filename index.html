@@ -193,9 +193,10 @@
         const div = document.createElement("div");
         div.className = "post";
 
-        const rkey = post.uri.split('/').pop();
-        const handle = post.author?.handle || 'unknown';
-        const postUrl = `https://bsky.app/profile/${handle}/post/${rkey}`;
+const rkey = post.uri.split('/').pop();
+const userHandle = document.getElementById("handleInput").value.trim();
+const postUrl = `https://bsky.app/profile/${userHandle}/post/${rkey}`;
+
 
         div.innerHTML = `
           <a href="${postUrl}" target="_blank" style="text-decoration: none; color: inherit;">
