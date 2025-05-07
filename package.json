@@ -8,7 +8,7 @@
     "start": "node script.js"
   },
   "dependencies": {
-    "@atproto/api": "0.3.12"
+    "@atproto/api": "^0.0.35"
   },
   "engines": {
     "node": ">=18"
