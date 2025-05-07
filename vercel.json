@@ -1,0 +1,19 @@
+{
+  "routes": [
+    {
+      "src": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i)(notion|slack|discord|bot|crawler|preview|twitter|facebook|embed)"
+        }
+      ],
+      "dest": "/preview.html"
+    },
+    {
+      "src": "/",
+      "dest": "/index.html"
+    }
+  ]
+}
