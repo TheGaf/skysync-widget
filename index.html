@@ -9,6 +9,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;700&display=swap" rel="stylesheet" />
   <link rel="preload" as="audio" href="https://archive.org/download/hangouts_sfx/hangouts_message_2.ogg">
   <style>
+#fallbackImage {
+  pointer-events: none;
+}
+
     body {
       font-family: 'Titillium Web', sans-serif;
       background-color: #121212;
@@ -147,19 +151,18 @@
 </head>
 
 <body>
+  <!-- Fallback image goes HERE -->
+<img src="https://gaf.nyc/Notion_Template_With_Widget.png"
+     alt="Preview image"
+     id="fallbackImage"
+     style="position: absolute; top: 0; left: 0; width: 100%; z-index: 9999;" />
+
   <video autoplay loop muted playsinline id="bg-video">
     <source src="https://gaf.nyc/cloud.mp4" type="video/mp4">
   </video>
 
 <div class="container">
   <h2>🌥️ BSKY FEED VIEWER 🌥️</h2>
-
-  <!-- Fallback image goes HERE -->
-  <img src="https://gaf.nyc/Notion_Template_With_Widget.png"
-       alt="Preview image"
-       id="fallbackImage"
-       style="width:100%; border-radius:10px;" />
-
   <!-- Then the actual widget -->
   <input type="text" id="handleInput" placeholder="Enter handle (no @)" />
   <button onclick="loadFeed()">Load Feed</button>
