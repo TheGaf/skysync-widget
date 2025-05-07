@@ -202,8 +202,10 @@
       const div = document.createElement("div");
       div.className = "post";
       
-      const [_, did, , rkey] = post.uri.split('/');
-      const postUrl = `https://bsky.app/profile/${did}/post/${rkey}`;
+const handle = post.author?.handle || 'unknown';
+const [_, did, , rkey] = post.uri.split('/');
+const postUrl = `https://bsky.app/profile/${handle}/post/${rkey}`;
+
 
       div.innerHTML = `
         <a href="${postUrl}" target="_blank" style="text-decoration: none; color: inherit;">
