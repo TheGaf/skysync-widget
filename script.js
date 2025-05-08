@@ -47,30 +47,27 @@ function autolink(text) {
        .replace(/>/g, "&gt;")
        .replace(/"/g, "&quot;");
 
-  let safeText = escapeHTML(text);
+  return text.split(/\s+/).map(word => {
+    if (word.startsWith("@") && /^[\w.-]+(?:\.bsky\.social)?$/.test(word.slice(1))) {
+      const handle = word.slice(1);
+      const fullHandle = handle.includes('.') ? handle : `${handle}.bsky.social`;
+      return `<a href="https://bsky.app/profile/${fullHandle}" target="_blank" rel="noopener noreferrer">@${handle}</a>`;
+    }
 
-  // Process mentions first
-  safeText = safeText.replace(/@([\w.-]+(?:\.bsky\.social)?)/g, (_, handle) => {
-    const fullHandle = handle.includes('.') ? handle : `${handle}.bsky.social`;
-    return `<a href="https://bsky.app/profile/${fullHandle}" target="_blank" rel="noopener noreferrer">@${handle}</a>`;
-  });
+    if (word.startsWith("#") && /^\w+$/.test(word.slice(1))) {
+      const tag = word.slice(1);
+      return `<a href="https://bsky.app/search?q=%23${tag}" target="_blank" rel="noopener noreferrer">#${tag}</a>`;
+    }
 
-  // Process hashtags
-  safeText = safeText.replace(/#(\w+)/g, (_, tag) => {
-    return `<a href="https://bsky.app/search?q=%23${tag}" target="_blank" rel="noopener noreferrer">#${tag}</a>`;
-  });
+    if (/^(https?:\/\/[^\s]+)/i.test(word)) {
+      const url = word.match(/^(https?:\/\/[^\s]+)/i)[0];
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+    }
 
-  // Finally process actual URLs
-  safeText = safeText.replace(/\bhttps?:\/\/[^\s<]+/g, (url) => {
-    return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
-  });
-
-  return safeText;
+    return escapeHTML(word);
+  }).join(" ");
 }
 
-
-
-// Render posts
 function renderPosts() {
   const feedContainer = document.getElementById("feedContainer");
   feedContainer.innerHTML = "";
