@@ -43,14 +43,14 @@ async function loadFeed(playSound = false) {
 }
 
 function autolink(text) {
-  const urlRegex = /(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9\\-._~:/?#@!$&'()*+,;=%]+(?:\\.[a-z]{2,})+[^\\s<]*/g;
-  const mentionRegex = /@([\\w.-]+(?:\\.bsky\\.social)?)/g;
-  const hashtagRegex = /#(\\w+)/g;
+  const urlRegex = /(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9\-._~:/?#@!$&'()*+,;=%]+(?:\.[a-z]{2,})+[^\s<]*/g;
+  const mentionRegex = /@([\w.-]+(?:\.bsky\.social)?)/g;
+  const hashtagRegex = /#(\w+)/g;
 
   return text
     .replace(urlRegex, url => {
       const cleanUrl = url.startsWith("http") ? url : `https://${url}`;
-      const display = cleanUrl.replace(/^https?:\\/\\//, '').replace(/\\/$/, '').slice(0, 50);
+      const display = cleanUrl.replace(/^https?:\/\//, '').replace(/\/$/, '').slice(0, 50);
       return `<a href="${cleanUrl}" target="_blank">${display}</a>`;
     })
     .replace(mentionRegex, (match, handle) => {
