@@ -14,7 +14,7 @@ async function loadFeed(playSound = false) {
   if (!handle) return;
 
   try {
-    const response = await fetch(`https://skysync-widget.vercel.app/api/bluesky/feed?handle=${handle}`);
+    const response = await fetch(`/api/bluesky/feed?handle=${handle}`);
 
     if (!response.ok) {
       throw new Error("User does not exist.");
@@ -41,22 +41,27 @@ async function loadFeed(playSound = false) {
 }
 
 function autolink(text) {
-  const urlRegex = /(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9\-._~:/?#@!$&'()*+,;=%]+(?:\.[a-z]{2,})+[^\s<]*/g;
-  const mentionRegex = /@([\w.-]+(?:\.bsky\.social)?)/g;
-  const hashtagRegex = /#(\w+)/g;
+  const escapeHTML = (str) =>
+    str.replace(/&/g, "&amp;")
+       .replace(/</g, "&lt;")
+       .replace(/>/g, "&gt;")
+       .replace(/"/g, "&quot;");
 
-  return text
-    .replace(urlRegex, url => {
-      const cleanUrl = url.startsWith("http") ? url : `https://${url}`;
-      return `<a href="${cleanUrl}" target="_blank" rel="noopener noreferrer">${cleanUrl}</a>`;
-    })
-    .replace(mentionRegex, (match, handle) => {
+  let escaped = escapeHTML(text);
+
+  escaped = escaped
+    .replace(/@([\\w.-]+(?:\\.bsky\\.social)?)/g, (match, handle) => {
       const fullHandle = handle.includes('.') ? handle : `${handle}.bsky.social`;
       return `<a href="https://bsky.app/profile/${fullHandle}" target="_blank" rel="noopener noreferrer">@${handle}</a>`;
     })
-    .replace(hashtagRegex, (match, tag) => {
+    .replace(/#(\\w+)/g, (match, tag) => {
       return `<a href="https://bsky.app/search?q=%23${tag}" target="_blank" rel="noopener noreferrer">#${tag}</a>`;
+    })
+    .replace(/(https?:\\/\\/[^\\s]+)/g, (url) => {
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
     });
+
+  return escaped;
 }
 
 function renderPosts() {
@@ -68,15 +73,11 @@ function renderPosts() {
   const currentPosts = posts.slice(startIndex, endIndex);
 
   currentPosts.forEach(post => {
-    const postDiv = document.createElement("a");
+    const postDiv = document.createElement("div");
     postDiv.className = "post";
-    postDiv.href = `https://bsky.app/profile/${post.author.handle}/post/${post.uri.split("/").pop()}`;
-    postDiv.target = "_blank";
-    postDiv.rel = "noopener noreferrer";
 
     let embedHTML = "";
 
-    // Only show media if it's not a quoted record
     if (post.embed?.images) {
       embedHTML = post.embed.images.map(img => `<img src="${img.thumb}" />`).join("");
     } else if (post.embed?.external?.uri) {
@@ -85,10 +86,9 @@ function renderPosts() {
       embedHTML = isGif
         ? `<img src="${uri}" alt="GIF" />`
         : `<a href="${uri}" target="_blank" rel="noopener noreferrer"><img src="${thumb}" alt="${title}" /><p>${title}</p></a>`;
-    } else if (post.embed?.record?.uri && !post.embed?.record?.record) {
-      // Only embed video if it's not a nested quote
+    } else if (post.embed?.record?.uri && post.embed?.record?.author?.handle === post.author.handle) {
       const recordUri = post.embed.record.uri;
-      embedHTML = `<p><a href="https://bsky.app/profile/${post.author.handle}/post/${recordUri.split('/').pop()}" target="_blank" rel="noopener noreferrer">🎥 Video embedded — view on Bluesky</a></p>`;
+      embedHTML = `<p>🎥 <a href="https://bsky.app/profile/${post.author.handle}/post/${recordUri.split('/').pop()}" target="_blank" rel="noopener noreferrer">Video embedded — view on Bluesky</a></p>`;
     }
 
     postDiv.innerHTML = `
