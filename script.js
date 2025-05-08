@@ -14,7 +14,7 @@ async function loadFeed(playSound = false) {
   if (!handle) return;
 
   try {
-    const response = await fetch(`/api/bluesky/feed?handle=${handle}`);
+    const response = await fetch(`https://skysync-widget.vercel.app/api/bluesky/feed?handle=${handle}`);
 
     if (!response.ok) {
       throw new Error("User does not exist.");
