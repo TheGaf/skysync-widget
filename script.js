@@ -15,10 +15,7 @@ async function loadFeed(playSound = false) {
 
   try {
     const response = await fetch(`/api/bluesky/feed?handle=${handle}`);
-
-    if (!response.ok) {
-      throw new Error("User does not exist.");
-    }
+    if (!response.ok) throw new Error("User does not exist.");
 
     const data = await response.json();
     const newPosts = data.posts || [];
@@ -47,25 +44,27 @@ function autolink(text) {
        .replace(/>/g, "&gt;")
        .replace(/"/g, "&quot;");
 
-  return text.split(/\s+/).map(word => {
-    if (word.startsWith("@") && /^[\w.-]+(?:\.bsky\.social)?$/.test(word.slice(1))) {
-      const handle = word.slice(1);
-      const fullHandle = handle.includes('.') ? handle : `${handle}.bsky.social`;
-      return `<a href="https://bsky.app/profile/${fullHandle}" target="_blank" rel="noopener noreferrer">@${handle}</a>`;
-    }
+  const mentionRegex = /@([\w.-]+(?:\.bsky\.social)?)/g;
+  const hashtagRegex = /#(\w+)/g;
+  const urlRegex = /(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9\-._~:/?#@!$&'()*+,;=%]+(?:\.[a-z]{2,})+[^\s<]*/g;
 
-    if (word.startsWith("#") && /^\w+$/.test(word.slice(1))) {
-      const tag = word.slice(1);
-      return `<a href="https://bsky.app/search?q=%23${tag}" target="_blank" rel="noopener noreferrer">#${tag}</a>`;
-    }
+  let safeText = escapeHTML(text);
 
-    if (/^(https?:\/\/[^\s]+)/i.test(word)) {
-      const url = word.match(/^(https?:\/\/[^\s]+)/i)[0];
-      return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
-    }
+  safeText = safeText.replace(mentionRegex, (match, handle) => {
+    const full = handle.includes('.') ? handle : `${handle}.bsky.social`;
+    return `<a href="https://bsky.app/profile/${full}" target="_blank" rel="noopener noreferrer">@${handle}</a>`;
+  });
 
-    return escapeHTML(word);
-  }).join(" ");
+  safeText = safeText.replace(hashtagRegex, (match, tag) => {
+    return `<a href="https://bsky.app/search?q=%23${tag}" target="_blank" rel="noopener noreferrer">#${tag}</a>`;
+  });
+
+  safeText = safeText.replace(urlRegex, url => {
+    const link = url.startsWith("http") ? url : `https://${url}`;
+    return `<a href="${link}" target="_blank" rel="noopener noreferrer">${link}</a>`;
+  });
+
+  return safeText;
 }
 
 function renderPosts() {
@@ -85,9 +84,8 @@ function renderPosts() {
 
     let embedHTML = "";
 
-if (post.embed?.record?.uri && post.embed?.record?.embeds?.length > 0) {
-  embedHTML = `<p>👁️ 👁️ <strong>View media on Bsky</strong></p>`;
-}
+    if (post.embed?.record?.uri && post.embed?.record?.embeds?.length > 0) {
+      embedHTML = `<p>👁️ 👁️ <strong>View media on Bsky</strong></p>`;
     } else if (post.embed?.images) {
       embedHTML = post.embed.images.map(img => `<img src="${img.thumb}" />`).join("");
     } else if (post.embed?.external?.uri) {
