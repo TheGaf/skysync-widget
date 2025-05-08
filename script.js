@@ -84,7 +84,13 @@ function renderPosts() {
       embedHTML = isGif
         ? `<img src="${uri}" alt="GIF" />`
         : `<a href="${uri}" target="_blank" rel="noopener noreferrer"><img src="${thumb}" alt="${title}" /><p>${title}</p></a>`;
+    } else if (post.embed?.record?.record?.uri) {
+      // Quoted video skeet
+      const quotedUri = post.embed.record.record.uri;
+      const quotedHandle = post.embed.record.record.author?.handle || "unknown";
+      embedHTML = `<p><a href="https://bsky.app/profile/${quotedHandle}/post/${quotedUri.split('/').pop()}" target="_blank" rel="noopener noreferrer">🎥 Quoted video — view on original skeet</a></p>`;
     } else if (post.embed?.record?.uri) {
+      // Fallback single-level embed
       const recordUri = post.embed.record.uri;
       embedHTML = `<p><a href="https://bsky.app/profile/${post.author.handle}/post/${recordUri.split('/').pop()}" target="_blank" rel="noopener noreferrer">🎥 Video embedded — view on Bluesky</a></p>`;
     }
