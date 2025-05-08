@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -57,6 +56,14 @@
       margin-bottom: 20px;
     }
 
+    .input-block {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
     input[type="text"] {
       text-transform: lowercase;
       width: 130px;
@@ -66,19 +73,17 @@
       font-size: 14px;
       border: none;
       border-radius: 5px;
-      margin-bottom: 10px;
     }
 
     button {
       background-color: #59DCFF;
       color: #fff;
       border: none;
-      padding: 10px 20px;
+      padding: 10px 16px;
       font-weight: 700;
       font-family: 'Titillium Web', sans-serif;
       border-radius: 5px;
       cursor: pointer;
-      margin: 5px;
     }
 
     .feed-box {
@@ -144,9 +149,20 @@
       50% { color: #00FF33; }
       100% { color: #FFFFFF; }
     }
+
+    @media (max-width: 340px) {
+      .input-block {
+        flex-direction: column;
+      }
+
+      input[type="text"],
+      button {
+        width: 100%;
+        margin: 0;
+      }
+    }
   </style>
 </head>
-
 <body>
   <video autoplay loop muted playsinline id="bg-video">
     <source src="https://gaf.nyc/cloud.mp4" type="video/mp4">
@@ -154,13 +170,14 @@
 
   <div class="container">
     <h2>🌥️ BSKY FEED VIEWER 🌥️</h2>
-<div class="input-block">
-  <input type="text" id="handleInput" placeholder="Enter handle (no @)" />
-  <button onclick="loadFeed()">Load Feed</button>
-</div>
 
+    <div class="input-block">
+      <input type="text" id="handleInput" placeholder="Enter handle (no @)" />
+      <button onclick="loadFeed()">Load Feed</button>
+    </div>
 
     <div class="feed-box" id="feedContainer"></div>
+
     <div class="nav-buttons">
       <button onclick="changePage(-1)">Back</button>
       <button onclick="changePage(1)">Next</button>
@@ -171,5 +188,4 @@
 
   <script src="script.js"></script>
 </body>
-
 </html>
