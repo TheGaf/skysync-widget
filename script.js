@@ -40,6 +40,22 @@ async function loadFeed(playSound = false) {
   }
 }
 
+function autolink(text) {
+  const urlRegex = /https?:\/\/[^\s]+/g;
+  const mentionRegex = /@([\w.-]+(\.bsky\.social)?)/g;
+  const hashtagRegex = /#(\w+)/g;
+
+  return text
+    .replace(urlRegex, url => `<a href="${url}" target="_blank">${url}</a>`)
+    .replace(mentionRegex, (match, handle) => {
+      const cleanHandle = handle.includes('.') ? handle : `${handle}.bsky.social`;
+      return `<a href="https://bsky.app/profile/${cleanHandle}" target="_blank">@${handle}</a>`;
+    })
+    .replace(hashtagRegex, (match, tag) => {
+      return `<a href="https://bsky.app/search?q=%23${tag}" target="_blank">#${tag}</a>`;
+    });
+}
+
 function renderPosts() {
   const feedContainer = document.getElementById("feedContainer");
   feedContainer.innerHTML = "";
@@ -52,7 +68,7 @@ function renderPosts() {
     const postDiv = document.createElement("div");
     postDiv.className = "post";
     postDiv.innerHTML = `
-      <h3>${post.text}</h3>
+      <h3>${autolink(post.text)}</h3>
       <time>${new Date(post.createdAt).toLocaleString()}</time>
       ${post.embed && post.embed.images ? post.embed.images.map(img => `<img src="${img.thumb}" />`).join("") : ""}
     `;
