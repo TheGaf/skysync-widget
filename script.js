@@ -1,3 +1,5 @@
+# Complete `script.js` with full linking for post boxes, hashtags, @mentions, and URLs
+script_js = """
 let posts = [];
 let currentPage = 0;
 const postsPerPage = 5;
@@ -41,14 +43,14 @@ async function loadFeed(playSound = false) {
 }
 
 function autolink(text) {
-  const urlRegex = /(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9\-._~:/?#@!$&'()*+,;=%]+(?:\.[a-z]{2,})+[^\s<]*/g;
-  const mentionRegex = /@([\w.-]+(\.bsky\.social)?)/g;
-  const hashtagRegex = /#(\w+)/g;
+  const urlRegex = /(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9\\-._~:/?#@!$&'()*+,;=%]+(?:\\.[a-z]{2,})+[^\\s<]*/g;
+  const mentionRegex = /@([\\w.-]+(?:\\.bsky\\.social)?)/g;
+  const hashtagRegex = /#(\\w+)/g;
 
   return text
     .replace(urlRegex, url => {
       const cleanUrl = url.startsWith("http") ? url : `https://${url}`;
-      const display = cleanUrl.replace(/^https?:\/\//, '').replace(/\/$/, '').slice(0, 50);
+      const display = cleanUrl.replace(/^https?:\\/\\//, '').replace(/\\/$/, '').slice(0, 50);
       return `<a href="${cleanUrl}" target="_blank">${display}</a>`;
     })
     .replace(mentionRegex, (match, handle) => {
@@ -69,14 +71,16 @@ function renderPosts() {
   const currentPosts = posts.slice(startIndex, endIndex);
 
   currentPosts.forEach(post => {
-    const postDiv = document.createElement("div");
-    postDiv.className = "post";
-    postDiv.innerHTML = `
+    const postLink = document.createElement("a");
+    postLink.href = `https://bsky.app/profile/${post.author.handle}/post/${post.uri.split("/").pop()}`;
+    postLink.target = "_blank";
+    postLink.className = "post";
+    postLink.innerHTML = `
       <h3>${autolink(post.text)}</h3>
       <time>${new Date(post.createdAt).toLocaleString()}</time>
       ${post.embed && post.embed.images ? post.embed.images.map(img => `<img src="${img.thumb}" />`).join("") : ""}
     `;
-    feedContainer.appendChild(postDiv);
+    feedContainer.appendChild(postLink);
   });
 }
 
@@ -87,3 +91,11 @@ function changePage(direction) {
 }
 
 setInterval(() => loadFeed(true), 60000);
+"""
+
+# Save to file
+output_path = "/mnt/data/script_bsky_final.js"
+with open(output_path, "w") as f:
+    f.write(script_js.strip())
+
+output_path
