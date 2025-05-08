@@ -1,5 +1,3 @@
-# Complete `script.js` with full linking for post boxes, hashtags, @mentions, and URLs
-script_js = """
 let posts = [];
 let currentPage = 0;
 const postsPerPage = 5;
@@ -91,11 +89,3 @@ function changePage(direction) {
 }
 
 setInterval(() => loadFeed(true), 60000);
-"""
-
-# Save to file
-output_path = "/mnt/data/script_bsky_final.js"
-with open(output_path, "w") as f:
-    f.write(script_js.strip())
-
-output_path
