@@ -68,8 +68,11 @@ function renderPosts() {
   const currentPosts = posts.slice(startIndex, endIndex);
 
   currentPosts.forEach(post => {
-    const postDiv = document.createElement("div");
+    const postDiv = document.createElement("a");
     postDiv.className = "post";
+    postDiv.href = `https://bsky.app/profile/${post.author.handle}/post/${post.uri.split("/").pop()}`;
+    postDiv.target = "_blank";
+    postDiv.rel = "noopener noreferrer";
 
     let embedHTML = "";
 
