@@ -86,7 +86,7 @@ function renderPosts() {
         : `<a href="${uri}" target="_blank" rel="noopener noreferrer"><img src="${thumb}" alt="${title}" /><p>${title}</p></a>`;
     } else if (post.embed?.record?.uri) {
       const recordUri = post.embed.record.uri;
-      embedHTML = `<p><a href="https://bsky.app/profile/${post.author.handle}/post/${recordUri.split('/').pop()}" target="_blank" rel="noopener noreferrer">View video or embed</a></p>`;
+      embedHTML = `<p><a href="https://bsky.app/profile/${post.author.handle}/post/${recordUri.split('/').pop()}" target="_blank" rel="noopener noreferrer">🎥 Video embedded — view on Bluesky</a></p>`;
     }
 
     postDiv.innerHTML = `
