@@ -41,12 +41,7 @@ async function loadFeed(playSound = false) {
 }
 
 function autolink(text) {
-  const mentionRegex = /@([\w.-]+(?:\.bsky\.social)?)/g;
-  const hashtagRegex = /#(\w+)/g;
-  const urlRegex = /(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9\-._~:/?#@!$&'()*+,;=%]+(?:\.[a-z]{2,})+[^\s<]*/g;
-
-  // 1. Escape HTML first
-  const escapeHTML = str =>
+  const escapeHTML = (str) =>
     str.replace(/&/g, "&amp;")
        .replace(/</g, "&lt;")
        .replace(/>/g, "&gt;")
@@ -54,25 +49,25 @@ function autolink(text) {
 
   let safeText = escapeHTML(text);
 
-  // 2. Replace @mentions
-  safeText = safeText.replace(mentionRegex, (match, handle) => {
-    const full = handle.includes('.') ? handle : `${handle}.bsky.social`;
-    return `<a href="https://bsky.app/profile/${full}" target="_blank" rel="noopener noreferrer">@${handle}</a>`;
+  // Process mentions first
+  safeText = safeText.replace(/@([\w.-]+(?:\.bsky\.social)?)/g, (_, handle) => {
+    const fullHandle = handle.includes('.') ? handle : `${handle}.bsky.social`;
+    return `<a href="https://bsky.app/profile/${fullHandle}" target="_blank" rel="noopener noreferrer">@${handle}</a>`;
   });
 
-  // 3. Replace hashtags
-  safeText = safeText.replace(hashtagRegex, (match, tag) => {
+  // Process hashtags
+  safeText = safeText.replace(/#(\w+)/g, (_, tag) => {
     return `<a href="https://bsky.app/search?q=%23${tag}" target="_blank" rel="noopener noreferrer">#${tag}</a>`;
   });
 
-  // 4. Replace URLs
-  safeText = safeText.replace(urlRegex, url => {
-    const link = url.startsWith("http") ? url : `https://${url}`;
-    return `<a href="${link}" target="_blank" rel="noopener noreferrer">${link}</a>`;
+  // Finally process actual URLs
+  safeText = safeText.replace(/\bhttps?:\/\/[^\s<]+/g, (url) => {
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
   });
 
   return safeText;
 }
+
 
 
 // Render posts
