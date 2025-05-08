@@ -40,25 +40,40 @@ async function loadFeed(playSound = false) {
   }
 }
 
-// Autolink for URLs, @mentions, and #hashtags
 function autolink(text) {
-  const urlRegex = /(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9\-._~:/?#@!$&'()*+,;=%]+(?:\.[a-z]{2,})+[^\s<]*/g;
   const mentionRegex = /@([\w.-]+(?:\.bsky\.social)?)/g;
   const hashtagRegex = /#(\w+)/g;
+  const urlRegex = /(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9\-._~:/?#@!$&'()*+,;=%]+(?:\.[a-z]{2,})+[^\s<]*/g;
 
-  return text
-    .replace(urlRegex, url => {
-      const cleanUrl = url.startsWith("http") ? url : `https://${url}`;
-      return `<a href="${cleanUrl}" target="_blank" rel="noopener noreferrer">${cleanUrl}</a>`;
-    })
-    .replace(mentionRegex, (match, handle) => {
-      const fullHandle = handle.includes('.') ? handle : `${handle}.bsky.social`;
-      return `<a href="https://bsky.app/profile/${fullHandle}" target="_blank" rel="noopener noreferrer">@${handle}</a>`;
-    })
-    .replace(hashtagRegex, (match, tag) => {
-      return `<a href="https://bsky.app/search?q=%23${tag}" target="_blank" rel="noopener noreferrer">#${tag}</a>`;
-    });
+  // 1. Escape HTML first
+  const escapeHTML = str =>
+    str.replace(/&/g, "&amp;")
+       .replace(/</g, "&lt;")
+       .replace(/>/g, "&gt;")
+       .replace(/"/g, "&quot;");
+
+  let safeText = escapeHTML(text);
+
+  // 2. Replace @mentions
+  safeText = safeText.replace(mentionRegex, (match, handle) => {
+    const full = handle.includes('.') ? handle : `${handle}.bsky.social`;
+    return `<a href="https://bsky.app/profile/${full}" target="_blank" rel="noopener noreferrer">@${handle}</a>`;
+  });
+
+  // 3. Replace hashtags
+  safeText = safeText.replace(hashtagRegex, (match, tag) => {
+    return `<a href="https://bsky.app/search?q=%23${tag}" target="_blank" rel="noopener noreferrer">#${tag}</a>`;
+  });
+
+  // 4. Replace URLs
+  safeText = safeText.replace(urlRegex, url => {
+    const link = url.startsWith("http") ? url : `https://${url}`;
+    return `<a href="${link}" target="_blank" rel="noopener noreferrer">${link}</a>`;
+  });
+
+  return safeText;
 }
+
 
 // Render posts
 function renderPosts() {
