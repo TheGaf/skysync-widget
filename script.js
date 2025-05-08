@@ -85,8 +85,9 @@ function renderPosts() {
 
     let embedHTML = "";
 
-    if (post.embed?.record?.uri && post.embed?.record?.embeds?.length > 0) {
-      embedHTML = `<p>🎥 <strong>Video embedded — view on Bluesky</strong></p>`;
+if (post.embed?.record?.uri && post.embed?.record?.embeds?.length > 0) {
+  embedHTML = `<p>👁️ 👁️ <strong>View media on Bsky</strong></p>`;
+}
     } else if (post.embed?.images) {
       embedHTML = post.embed.images.map(img => `<img src="${img.thumb}" />`).join("");
     } else if (post.embed?.external?.uri) {
