@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Bluesky Feed Viewer</title>
   <meta name="description" content="Minimal Bluesky widget for embedding public feeds with live refresh, media, and responsive layout." />
-  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
   <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;700&display=swap" rel="stylesheet" />
   <link rel="preload" as="audio" href="https://archive.org/download/hangouts_sfx/hangouts_message_2.ogg">
   <style>
@@ -81,6 +81,7 @@
       color: #fff;
       border: none;
       padding: 10px 16px;
+      min-width: 100px;
       font-weight: 700;
       font-family: 'Titillium Web', sans-serif;
       border-radius: 5px;
