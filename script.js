@@ -59,7 +59,6 @@ function autolink(text) {
     });
 }
 
-
 function renderPosts() {
   const feedContainer = document.getElementById("feedContainer");
   feedContainer.innerHTML = "";
@@ -69,29 +68,31 @@ function renderPosts() {
   const currentPosts = posts.slice(startIndex, endIndex);
 
   currentPosts.forEach(post => {
-    const postLink = document.createElement("a");
-    postLink.href = `https://bsky.app/profile/${post.author.handle}/post/${post.uri.split("/").pop()}`;
-    postLink.target = "_blank";
-    postLink.className = "post";
+    const postDiv = document.createElement("div");
+    postDiv.className = "post";
 
     let embedHTML = "";
+
     if (post.embed?.images) {
       embedHTML = post.embed.images.map(img => `<img src="${img.thumb}" />`).join("");
     } else if (post.embed?.external?.uri) {
       const { uri, thumb, title } = post.embed.external;
-      embedHTML = `<img src="${thumb}" alt="${title}" /><p>${title}</p>`;
+      const isGif = uri.toLowerCase().endsWith(".gif");
+      embedHTML = isGif
+        ? `<img src="${uri}" alt="GIF" />`
+        : `<a href="${uri}" target="_blank" rel="noopener noreferrer"><img src="${thumb}" alt="${title}" /><p>${title}</p></a>`;
     } else if (post.embed?.record?.uri) {
       const recordUri = post.embed.record.uri;
-      embedHTML = `<p><a href="https://bsky.app/profile/${post.author.handle}/post/${recordUri.split('/').pop()}" target="_blank" rel="noopener noreferrer">View video or record</a></p>`;
+      embedHTML = `<p><a href="https://bsky.app/profile/${post.author.handle}/post/${recordUri.split('/').pop()}" target="_blank" rel="noopener noreferrer">View video or embed</a></p>`;
     }
 
-    postLink.innerHTML = `
+    postDiv.innerHTML = `
       <time>${new Date(post.createdAt).toLocaleString()}</time>
       <h3>${autolink(post.text)}</h3>
       ${embedHTML}
     `;
 
-    feedContainer.appendChild(postLink);
+    feedContainer.appendChild(postDiv);
   });
 }
 
