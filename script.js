@@ -41,25 +41,30 @@ async function loadFeed(playSound = false) {
 }
 
 function autolink(text) {
-  const escapeHTML = (str) =>
+  const escapeHTML = str =>
     str.replace(/&/g, "&amp;")
        .replace(/</g, "&lt;")
        .replace(/>/g, "&gt;")
-       .replace(/"/g, "&quot;");
+       .replace(/"/g, "&quot;")
+       .replace(/'/g, "&#039;");
 
   let escaped = escapeHTML(text);
 
-  escaped = escaped
-    .replace(/@([\w.-]+(?:\.bsky\.social)?)/g, (match, handle) => {
-      const fullHandle = handle.includes('.') ? handle : `${handle}.bsky.social`;
-      return `<a href="https://bsky.app/profile/${fullHandle}" target="_blank" rel="noopener noreferrer">@${handle}</a>`;
-    })
-    .replace(/#(\w+)/g, (match, tag) => {
-      return `<a href="https://bsky.app/search?q=%23${tag}" target="_blank" rel="noopener noreferrer">#${tag}</a>`;
-    })
-    .replace(/(https?:\/\/[^\s]+)/g, (url) => {
-      return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
-    });
+  // URLs
+  escaped = escaped.replace(/(https?:\/\/[^\s]+)/g, url => {
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+  });
+
+  // Mentions
+  escaped = escaped.replace(/@([\w.-]+(?:\.bsky\.social)?)/g, (_, handle) => {
+    const profileUrl = `https://bsky.app/profile/${handle.includes('.') ? handle : handle + '.bsky.social'}`;
+    return `<a href="${profileUrl}" target="_blank" rel="noopener noreferrer">@${handle}</a>`;
+  });
+
+  // Hashtags
+  escaped = escaped.replace(/#(\w+)/g, tag => {
+    return `<a href="https://bsky.app/search?q=%23${tag.slice(1)}" target="_blank" rel="noopener noreferrer">${tag}</a>`;
+  });
 
   return escaped;
 }
@@ -78,7 +83,10 @@ function renderPosts() {
 
     let embedHTML = "";
 
-    if (post.embed?.images) {
+    // Only show video embed message for main post, not quoted
+    if (post.embed?.record?.uri && post.embed?.record?.embeds?.length > 0) {
+      embedHTML = `<p>🎥 <a href="https://bsky.app/profile/${post.author.handle}/post/${post.uri.split('/').pop()}" target="_blank" rel="noopener noreferrer">Video embedded — view on Bluesky</a></p>`;
+    } else if (post.embed?.images) {
       embedHTML = post.embed.images.map(img => `<img src="${img.thumb}" />`).join("");
     } else if (post.embed?.external?.uri) {
       const { uri, thumb, title } = post.embed.external;
@@ -86,9 +94,6 @@ function renderPosts() {
       embedHTML = isGif
         ? `<img src="${uri}" alt="GIF" />`
         : `<a href="${uri}" target="_blank" rel="noopener noreferrer"><img src="${thumb}" alt="${title}" /><p>${title}</p></a>`;
-    } else if (post.embed?.record?.uri && post.embed?.record?.author?.handle === post.author.handle) {
-      const recordUri = post.embed.record.uri;
-      embedHTML = `<p>🎥 <a href="https://bsky.app/profile/${post.author.handle}/post/${recordUri.split('/').pop()}" target="_blank" rel="noopener noreferrer">Video embedded — view on Bluesky</a></p>`;
     }
 
     postDiv.innerHTML = `
