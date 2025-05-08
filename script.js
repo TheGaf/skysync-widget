@@ -40,6 +40,7 @@ async function loadFeed(playSound = false) {
   }
 }
 
+// Autolink for URLs, @mentions, and #hashtags
 function autolink(text) {
   const urlRegex = /(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9\-._~:/?#@!$&'()*+,;=%]+(?:\.[a-z]{2,})+[^\s<]*/g;
   const mentionRegex = /@([\w.-]+(?:\.bsky\.social)?)/g;
@@ -59,6 +60,7 @@ function autolink(text) {
     });
 }
 
+// Render posts
 function renderPosts() {
   const feedContainer = document.getElementById("feedContainer");
   feedContainer.innerHTML = "";
