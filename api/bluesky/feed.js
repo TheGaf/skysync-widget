@@ -3,7 +3,6 @@ import { BskyAgent } from '@atproto/api';
 const agent = new BskyAgent({ service: 'https://bsky.social' });
 
 export default async function handler(req, res) {
-  // Allow CORS
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -15,28 +14,26 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Login using env credentials
     await agent.login({
       identifier: process.env.BLUESKY_HANDLE,
       password: process.env.BLUESKY_APP_PASSWORD
     });
 
-    // Get profile and feed
-    const { data: profile } = await agent.getProfile({ actor: handle });
+    const { data: resolved } = await agent.resolveHandle({ handle });
+
     const { data: feed } = await agent.api.app.bsky.feed.getAuthorFeed({
-      actor: profile.did
+      actor: resolved.did
     });
 
-    // Map relevant fields and include embed
     const posts = feed.feed.map(post => ({
       text: post.post.record.text,
       uri: post.post.uri,
       createdAt: post.post.record.createdAt,
+      author: {
+        handle: post.post.author.handle
+      },
       embed: post.post.embed || null
     }));
-
-    // Optional: Debug logs
-    // console.log(posts.map(p => ({ text: p.text, embed: p.embed })));
 
     res.status(200).json({ posts });
   } catch (err) {
@@ -44,4 +41,3 @@ export default async function handler(req, res) {
     res.status(500).json({ error: "Failed to load feed" });
   }
 }
-
