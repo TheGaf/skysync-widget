@@ -2,18 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Bluesky Feed Viewer</title>
-  <meta name="description" content="Minimal Bluesky widget for embedding public feeds with media, hashtags, and live updates." />
-  <link rel="icon" href="favicon.ico" />
+  <meta name="description" content="Minimal Bluesky widget for embedding public feeds with live refresh, media, and responsive layout." />
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
   <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link rel="preload" as="audio" href="https://archive.org/download/hangouts_sfx/hangouts_message_2.ogg">
   <style>
     body {
       font-family: 'Titillium Web', sans-serif;
       background-color: #121212;
       color: #59DCFF;
-      margin: 0;
+      text-align: left;
       padding: 20px;
+      margin: 0;
     }
 
     #bg-video {
@@ -27,17 +29,30 @@
     }
 
     .container {
-      max-width: 280px;
+      max-width: 270px;
       margin: auto;
       padding: 20px;
-      z-index: 1;
       position: relative;
+      z-index: 1;
+    }
+
+    .logo {
+      width: 100%;
+      max-width: 90px;
+      display: block;
+      margin: 0 auto 30px auto;
+      animation: slowBlink 0.75s infinite alternate;
+    }
+
+    @keyframes slowBlink {
+      0% { filter: brightness(1); }
+      100% { filter: brightness(2); }
     }
 
     h2 {
       font-size: 18px;
       font-weight: 700;
-      color: #FFF;
+      color: #FFFFFF;
       text-align: center;
       margin-bottom: 20px;
     }
@@ -54,27 +69,29 @@
       text-transform: lowercase;
       width: 130px;
       padding: 10px;
+      font-weight: 400;
+      font-family: 'Titillium Web', sans-serif;
       font-size: 14px;
       border: none;
       border-radius: 5px;
-      font-family: inherit;
     }
 
     button {
       background-color: #59DCFF;
       color: #fff;
-      padding: 10px 16px;
-      font-weight: 700;
       border: none;
+      padding: 10px 16px;
+      min-width: 100px;
+      font-weight: 700;
+      font-family: 'Titillium Web', sans-serif;
       border-radius: 5px;
       cursor: pointer;
-      font-family: inherit;
     }
 
     .feed-box {
       background: rgba(0, 0, 0, 0.75);
-      border: 1px solid rgba(89, 220, 255, 0.1);
       border-radius: 10px;
+      border: 1px solid rgba(89, 220, 255, 0.1);
       max-height: 300px;
       min-height: 300px;
       overflow-y: auto;
@@ -112,21 +129,27 @@
 
     .nav-buttons button {
       background-color: #ff66cc;
-      color: #fff;
-      border: 2px solid #ff66cc;
+      color: #ffffff;
       margin: 0 5px;
+      border: 2px solid #ff66cc;
     }
 
-    .logo {
-      display: block;
-      max-width: 90px;
-      margin: 20px auto 0 auto;
-      animation: blink 1s infinite alternate;
+    a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 700;
+      animation: blink 2s infinite;
+    }
+
+    a:hover {
+      color: #FBAE17;
+      animation: none;
     }
 
     @keyframes blink {
-      0% { filter: brightness(1); }
-      100% { filter: brightness(1.5); }
+      0% { color: #FFFFFF; }
+      50% { color: #00FF33; }
+      100% { color: #FFFFFF; }
     }
 
     @media (max-width: 340px) {
@@ -151,8 +174,8 @@
     <h2>🌥️ BSKY FEED VIEWER 🌥️</h2>
 
     <div class="input-block">
-      <input type="text" id="handleInput" placeholder="Enter handle (no @)" />
-      <button onclick="loadFeed()">Load Feed</button>
+      <input type="text" id="handleInput" placeholder="Enter handle (no @)" aria-label="Bluesky handle" autocomplete="off" />
+      <button onclick="loadFeed()" aria-label="Load Bluesky feed">Load Feed</button>
     </div>
 
     <div class="feed-box" id="feedContainer"></div>
@@ -162,9 +185,12 @@
       <button onclick="changePage(1)">Next</button>
     </div>
 
-    <a href="https://gaf.nyc" target="_blank">
-      <img src="https://gaf.nyc/BGtitle.svg" alt="BG Logo" class="logo" />
-    </a>
+    <div style="text-align:center; font-size: 13px;">
+      <br>
+      <a href="https://gaf.nyc" target="_blank" rel="noopener noreferrer">
+        <img src="https://gaf.nyc/BGtitle.svg" alt="BG Logo" class="logo" />
+      </a>
+    </div>
   </div>
 
   <script src="script.js"></script>
