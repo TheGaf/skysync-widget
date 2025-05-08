@@ -15,7 +15,10 @@ async function loadFeed(playSound = false) {
 
   try {
     const response = await fetch(`/api/bluesky/feed?handle=${handle}`);
-    if (!response.ok) throw new Error("User does not exist.");
+
+    if (!response.ok) {
+      throw new Error("User does not exist.");
+    }
 
     const data = await response.json();
     const newPosts = data.posts || [];
@@ -46,22 +49,24 @@ function autolink(text) {
 
   const mentionRegex = /@([\w.-]+(?:\.bsky\.social)?)/g;
   const hashtagRegex = /#(\w+)/g;
-  const urlRegex = /(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9\-._~:/?#@!$&'()*+,;=%]+(?:\.[a-z]{2,})+[^\s<]*/g;
+  const urlRegex = /\bhttps?:\/\/[^\s<]+[^<.,:;"')\]\s]/g;
 
   let safeText = escapeHTML(text);
 
+  // 1. Replace URLs first
+  safeText = safeText.replace(urlRegex, url => {
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+  });
+
+  // 2. Replace @mentions
   safeText = safeText.replace(mentionRegex, (match, handle) => {
     const full = handle.includes('.') ? handle : `${handle}.bsky.social`;
     return `<a href="https://bsky.app/profile/${full}" target="_blank" rel="noopener noreferrer">@${handle}</a>`;
   });
 
+  // 3. Replace hashtags
   safeText = safeText.replace(hashtagRegex, (match, tag) => {
     return `<a href="https://bsky.app/search?q=%23${tag}" target="_blank" rel="noopener noreferrer">#${tag}</a>`;
-  });
-
-  safeText = safeText.replace(urlRegex, url => {
-    const link = url.startsWith("http") ? url : `https://${url}`;
-    return `<a href="${link}" target="_blank" rel="noopener noreferrer">${link}</a>`;
   });
 
   return safeText;
@@ -84,6 +89,7 @@ function renderPosts() {
 
     let embedHTML = "";
 
+    // Only show video embed if it's a top-level post (not a quote embed)
     if (post.embed?.record?.uri && post.embed?.record?.embeds?.length > 0) {
       embedHTML = `<p>👁️ 👁️ <strong>View media on Bsky</strong></p>`;
     } else if (post.embed?.images) {
