@@ -49,16 +49,17 @@ function autolink(text) {
     .replace(urlRegex, url => {
       const cleanUrl = url.startsWith("http") ? url : `https://${url}`;
       const display = cleanUrl.replace(/^https?:\/\//, '').replace(/\/$/, '').slice(0, 50);
-      return `<a href="${cleanUrl}" target="_blank">${display}</a>`;
+      return '<a href="' + cleanUrl + '" target="_blank" rel="noopener noreferrer">' + display + '</a>';
     })
     .replace(mentionRegex, (match, handle) => {
       const cleanHandle = handle.includes('.') ? handle : `${handle}.bsky.social`;
-      return `<a href="https://bsky.app/profile/${cleanHandle}" target="_blank">@${handle}</a>`;
+      return '<a href="https://bsky.app/profile/' + cleanHandle + '" target="_blank" rel="noopener noreferrer">@' + handle + '</a>';
     })
     .replace(hashtagRegex, (match, tag) => {
-      return `<a href="https://bsky.app/search?q=%23${tag}" target="_blank">#${tag}</a>`;
+      return '<a href="https://bsky.app/search?q=%23' + tag + '" target="_blank" rel="noopener noreferrer">#' + tag + '</a>';
     });
 }
+
 
 function renderPosts() {
   const feedContainer = document.getElementById("feedContainer");
