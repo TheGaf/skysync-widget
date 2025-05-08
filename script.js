@@ -10,22 +10,34 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function loadFeed(playSound = false) {
-  const handle = document.getElementById("handleInput").value.trim();
+  const handle = document.getElementById("handleInput").value.trim().toLowerCase();
   if (!handle) return;
 
-  const response = await fetch(`/api/bluesky/feed?handle=${handle}`);
-  const data = await response.json();
-  const newPosts = data.posts || [];
+  try {
+    const response = await fetch(`/api/bluesky/feed?handle=${handle}`);
 
-  const newTopUri = newPosts[0]?.uri;
-  if (playSound && newTopUri && newTopUri !== lastFirstUri) {
-    notificationSound.play();
+    if (!response.ok) {
+      throw new Error("User does not exist.");
+    }
+
+    const data = await response.json();
+    const newPosts = data.posts || [];
+
+    const newTopUri = newPosts[0]?.uri;
+    if (playSound && newTopUri && newTopUri !== lastFirstUri) {
+      notificationSound.play();
+    }
+    lastFirstUri = newTopUri;
+
+    posts = newPosts;
+    currentPage = 0;
+    renderPosts();
+
+  } catch (err) {
+    document.getElementById("feedContainer").innerHTML = `
+      <p style="color:#ff66cc; font-weight:700;">User does not exist or could not be loaded.</p>
+    `;
   }
-  lastFirstUri = newTopUri;
-
-  posts = newPosts;
-  currentPage = 0;
-  renderPosts();
 }
 
 function renderPosts() {
