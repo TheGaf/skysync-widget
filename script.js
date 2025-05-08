@@ -50,14 +50,14 @@ function autolink(text) {
   let escaped = escapeHTML(text);
 
   escaped = escaped
-    .replace(/@([\\w.-]+(?:\\.bsky\\.social)?)/g, (match, handle) => {
+    .replace(/@([\w.-]+(?:\.bsky\.social)?)/g, (match, handle) => {
       const fullHandle = handle.includes('.') ? handle : `${handle}.bsky.social`;
       return `<a href="https://bsky.app/profile/${fullHandle}" target="_blank" rel="noopener noreferrer">@${handle}</a>`;
     })
-    .replace(/#(\\w+)/g, (match, tag) => {
+    .replace(/#(\w+)/g, (match, tag) => {
       return `<a href="https://bsky.app/search?q=%23${tag}" target="_blank" rel="noopener noreferrer">#${tag}</a>`;
     })
-    .replace(/(https?:\\/\\/[^\\s]+)/g, (url) => {
+    .replace(/(https?:\/\/[^\s]+)/g, (url) => {
       return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
     });
 
