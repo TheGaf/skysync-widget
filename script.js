@@ -78,11 +78,24 @@ function renderPosts() {
     postLink.href = `https://bsky.app/profile/${post.author.handle}/post/${post.uri.split("/").pop()}`;
     postLink.target = "_blank";
     postLink.className = "post";
+
+    let embedHTML = "";
+    if (post.embed?.images) {
+      embedHTML = post.embed.images.map(img => `<img src="${img.thumb}" />`).join("");
+    } else if (post.embed?.external?.uri) {
+      const { uri, thumb, title } = post.embed.external;
+      embedHTML = `<img src="${thumb}" alt="${title}" /><p>${title}</p>`;
+    } else if (post.embed?.record?.uri) {
+      const recordUri = post.embed.record.uri;
+      embedHTML = `<p><a href="https://bsky.app/profile/${post.author.handle}/post/${recordUri.split('/').pop()}" target="_blank" rel="noopener noreferrer">View video or record</a></p>`;
+    }
+
     postLink.innerHTML = `
-      <h3>${autolink(post.text)}</h3>
       <time>${new Date(post.createdAt).toLocaleString()}</time>
-      ${post.embed && post.embed.images ? post.embed.images.map(img => `<img src="${img.thumb}" />`).join("") : ""}
+      <h3>${autolink(post.text)}</h3>
+      ${embedHTML}
     `;
+
     feedContainer.appendChild(postLink);
   });
 }
